@@ -1,0 +1,89 @@
+{% extends 'layouts/dashboard/base.html' %}
+
+{% block title %}
+    لوحة التحكم
+{% endblock %}
+
+{% block page_header %}
+    إدارة دوراتي
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    <li class="breadcrumb-item active">إدارة دوراتي</li>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="card card-success card-outline">
+            <div class="card-header">
+                <h5 class="m-0 d-flex justify-content-between align-items-center">
+                    كل الدورات
+                    <a class="btn btn-success ml-auto" href="{% url "accounts:course_create" %}">إنشاء دورة جديدة</a>
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row mt-3">
+                    {% for course in object_list %}
+                        <div class="col-lg-4">
+                            <div class="card">
+                                <img src="{{ course.image.url }}" class="card-img-top rounded-top"
+                                     alt="{{ course.title }}">
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <div class="col-sm-4">
+                                            <div class="description-block">
+                                                <h5 class="description-header">
+                                                    {{ course.students.count }}
+                                                    <i class="fas fa-user"></i>
+                                                </h5>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4 border-right border-left">
+                                            <div class="description-block">
+                                                <h5 class="description-header">
+                                                    مجانية
+                                                </h5>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-4">
+                                            <div class="description-block">
+                                                <h5 class="description-header">
+                                                    {{ course.modules.count }}
+                                                    <i class="fas fa-book"></i>
+                                                </h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <h5 class="card-title font-weight-bolder">{{ course.title }}</h5>
+                                    <p class="card-text py-3">
+                                        {{ course.overview|truncatewords:12 }}
+                                    </p>
+                                    <div style="gap: 10px" class="d-flex flex-wrap">
+                                        <a class="btn btn-primary" href="{% url "accounts:course_edit" course.id %}">تعديل</a>
+                                        <a class="btn btn-danger" href="{% url "accounts:course_delete" course.id %}">حذف</a>
+                                        <a class="btn btn-secondary" href="{% url "accounts:course_module_update" course.id %}">تعديل الوحدات</a>
+                                        {% if course.modules.count > 0 %}
+                                            <a class="btn btn-info"
+                                               href="{% url "accounts:module_content_list" course.modules.first.id %}">
+                                                إدارة المحتويات
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="col-12">
+                            <div style="letter-spacing: 1.5px" class="alert alert-info">
+                                <i class="fas fa-info-circle"></i>
+                                لم تقم بإنشاء أي دورات بعد.
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div><!-- /.row -->
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+{% endblock %}

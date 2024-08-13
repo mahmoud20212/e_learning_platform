@@ -1,0 +1,90 @@
+{% extends 'layouts/dashboard/base.html' %}
+
+{% block title %}
+لوحة التحكم
+{% endblock %}
+
+{% block page_header %}
+    الرسائل المرسلة
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    <li class="breadcrumb-item active">الرسائل المرسلة</li>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <a href="{% url 'accounts:create_message' %}" class="btn btn-success btn-block mb-3">رسالة جديدة</a>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">المجلد</h3>
+
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="nav nav-pills flex-column">
+                        <li class="nav-item active">
+                            <a href="{% url 'accounts:inbox_messages' %}" class="nav-link">
+                                <i class="fas fa-inbox"></i> الوارد
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'accounts:sent_messages' %}" class="nav-link">
+                                <i class="far fa-envelope"></i> المرسل
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+        </div>
+        <!-- /.col -->
+        <div class="col-md-9">
+            <div class="card card-success card-outline">
+                <div class="card-header">
+                    <h3 class="card-title">المرسل</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body p-0">
+                    
+                    <div class="table-responsive mailbox-messages">
+                        <table class="table table-hover table-striped">
+                            <tbody>
+                                {% for message in my_messages %}
+                                <tr>
+                                    </td>
+                                    <td class="mailbox-name"><a href="{% url 'accounts:read_message' message.id %}">{{ message.recipient_user.get_full_name }}</a></td>
+                                    <td class="mailbox-subject">
+                                        {{ message.subject }}
+                                    </td>
+                                    <td class="mailbox-attachment"></td>
+                                    <td class="mailbox-date">{{ message.created }}</td>
+                                </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td class="bg-white rounded-b">لا يوجد رسائل.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <!-- /.table -->
+                    </div>
+                    <!-- /.mail-box-messages -->
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+        </div>
+        <!-- /.col -->
+    </div>
+</div><!-- /.container-fluid -->
+{% endblock %}

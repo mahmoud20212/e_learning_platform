@@ -1,0 +1,194 @@
+{% extends 'layouts/dashboard/base.html' %}
+{% load crispy_forms_tags %}
+{% load course %}
+{% load static %}
+
+{% block title %}
+    لوحة التحكم
+{% endblock %}
+
+{% block page_header %}
+    إدارة المحتويات
+{% endblock %}
+{% block breadcrumb %}
+    {{ block.super }}
+    <li class="breadcrumb-item">
+        <a class="text-success" href="#">دوراتي</a>
+    </li>
+    <li class="breadcrumb-item active">
+        إدارة المحتويات
+    </li>
+
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+    {% with course=module.course %}
+        <div class="mb-3 text-left">
+            <a class="btn btn-sm btn-danger" href="{% url "accounts:student_course_detail" course.id %}">
+                <i class="fas fa-eye"></i>
+                معاينة
+            </a>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card card-row card-success">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            دورة "{{ module.course.title }}"
+                        </h3>
+                    </div>
+                    <div id="modules" class="card-body">
+                        {% for m in course.modules.all %}
+                            <div data-id="{{ m.id }}"
+                                 class="card-module move card card-success card-outline {% if m == module %}selected{% endif %}">
+                                <div class="card-header">
+                                    <h5 class="card-title">
+                                        <a class="text-navy d-block"
+                                           href="{% url 'accounts:module_content_list' m.id %}">
+                                            الوحدة <span class="order">{{ m.order|add:1 }}</span>
+                                            <div class="title">
+                                                {{ m.title }}
+                                            </div>
+                                        </a>
+                                    </h5>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div class="border-top mt-3 pt-3">
+                            <a class="text-success" href="{% url 'accounts:course_module_update' course.id %}">
+                                تعديل الوحدات
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card card-row card-lightblue">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            الوحدة {{ module.order|add:1 }}: {{ module.title }}
+                        </h3>
+                    </div>
+                    <div id="module-contents" class="card-body">
+                        {% for content in module.contents.all %}
+                            <div data-id="{{ content.id }}" class="move card card-lightblue card-outline">
+                                {% with item=content.item %}
+                                    <div class="card-header">
+                                        <h5 class="card-title">{{ item }} ({{ item|model_name }})</h5>
+                                        <div class="card-tools">
+                                            <a href="{% url 'accounts:module_content_update' module.id item|model_name item.id %}"
+                                               class="btn btn-tool">
+                                                <i class="fas fa-pen"></i>
+                                            </a>
+                                            <a href="#"
+                                               onclick="event.preventDefault(); document.getElementById('content-{{ content.id }}').submit();"
+                                               class="btn btn-tool btn-link">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                            <form id='content-{{ content.id }}' class="d-none"
+                                                  action="{% url 'accounts:module_content_delete' content.id %}"
+                                                  method="POST">
+                                                {% csrf_token %}
+                                            </form>
+                                        </div>
+                                    </div>
+                                {% endwith %}
+                            </div>
+                            {% empty %}
+                            <p class="card-text">
+                                هذه الوحدة لا تحتوي على محتويات حتى الآن.
+                            </p>
+                        {% endfor %}
+                        <div class="border-top mt-3 pt-3">
+                            <h6>اضافة محتوى جديد</h6>
+                            <ul style="gap: 10px" class="p-0 m-0 list-unstyled d-flex content-types">
+                                <li>
+                                    <a class="text-lightblue"
+                                       href="{% url 'accounts:module_content_create' module.id 'text' %}">
+                                        نص
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="text-lightblue"
+                                       href="{% url 'accounts:module_content_create' module.id 'image' %}">
+                                        صورة
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="text-lightblue"
+                                       href="{% url 'accounts:module_content_create' module.id 'video' %}">
+                                        فيديو
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="text-lightblue"
+                                       href="{% url 'accounts:module_content_create' module.id 'file' %}">
+                                        ملف
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endwith %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+
+    <script src="{% static 'js/lib/html5sortable.min.js' %}"></script>
+    <script>
+        var options = {
+            method: 'POST',
+            mode: 'same-origin'
+        }
+
+        const moduleOrderUrl = '{% url "accounts:module_order" %}';
+        sortable('#modules', {
+            forcePlaceholderSize: true,
+            placeholderClass: 'placeholder'
+        })[0].addEventListener('sortupdate', function (e) {
+            modulesOrder = {};
+            var modules = document.querySelectorAll('#modules .card-module');
+
+            modules.forEach(function (module, index) {
+                // update module index
+                modulesOrder[module.dataset.id] = index;
+                console.log(module.querySelector('.order'))
+                // update index in HTML element
+                module.querySelector('.order').innerHTML = index + 1;
+
+                // add new order to the HTTP request options
+                options['body'] = JSON.stringify(modulesOrder);
+
+                // send HTTP request
+                fetch(moduleOrderUrl, options);
+            });
+        });
+
+        // ...
+
+        const contentOrderUrl = '{% url "accounts:content_order" %}';
+        sortable('#module-contents', {
+            forcePlaceholderSize: true,
+            placeholderClass: 'placeholder'
+        })[0].addEventListener('sortupdate', function (e) {
+            contentOrder = {};
+            var contents = document.querySelectorAll('#module-contents div');
+
+            contents.forEach(function (content, index) {
+                // update content index
+                contentOrder[content.dataset.id] = index;
+
+                // add new order to the HTTP request options
+                options['body'] = JSON.stringify(contentOrder);
+
+                // send HTTP request
+                fetch(contentOrderUrl, options);
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,1 +1,1 @@
-# e_learning_platform
+# E-Learning-Platform-AI

@@ -1,0 +1,261 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {% block title %}{% endblock %}
+    </title>
+    <!-- Tailwind CSS -->
+    <!--<script src="https://cdn.tailwindcss.com?plugins=forms"></script>-->
+    <script src="{% static 'js/index/tailwind.min.js' %}"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+          integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <!--<link rel="stylesheet" href="{% static 'css/index/all.min.css' %}" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />-->
+    <!-- Ionicons -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="{% static 'css/index/main.css' %}">
+    <!-- Styles Block -->
+    {% block styles %}
+    {% endblock %}
+    <!-- Utils JS -->
+    <script src="{% static 'js/index/utils.js' %}"></script>
+</head>
+
+<body>
+    <!-- class="fixed w-full z-50 bg-white drop-shadow-md" -->
+    <header class="py-5 bg-white drop-shadow-md lg:bg-transparent lg:drop-shadow-none relative z-50">
+        <div class="container mx-auto px-4 relative">
+            <nav class="flex items-center justify-between">
+                <a href="/">
+                    <h1 class="text-green-500 text-3xl font-bold">eLearning</h1>
+                </a>
+                <div class="nav-links duration-500 absolute bg-white lg:bg-transparent lg:static lg:min-h-fit min-h-[30vh] left-0 top-[-500px] lg:w-auto w-full flex items-center px-5 py-5 lg:py-0">
+                    <ul class="flex lg:flex-row flex-col gap-4 me-28">
+                        <li>
+                            <a href="/"
+                               class="{% if page == 'index' %}active{% endif %}">الرئيسية</a>
+                        </li>
+                        <li>
+                            <a href="/#features" class="p-2 text-gray-500 font-normal">مميزات</a>
+                        </li>
+                        <li>
+                            <a href="/#benefits" class="p-2 text-gray-500 font-normal">فوائد</a>
+                        </li>
+                        <li class="dropdown relative">
+                            <a href="/#courses"
+                               class="{% if page == 'courses' %}active{% endif %}">الدورات</a>
+                            <div class="dropdown-menu absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                <a href="{% url 'courses:courses_list' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" id="user-menu-item-0">
+                                    كل الدورات
+                                </a>
+                            </div>
+                        </li>
+                        <li class="dropdown relative">
+                            <a href="/#posts"
+                               class="{% if page == 'blog' %}active{% endif %}">التدوينات</a>
+                            <div class="dropdown-menu absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                <a href="{% url 'blog:posts' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" id="user-menu-item-0">
+                                    كل التدوينات
+                                </a>
+                            </div>
+                        </li>
+                        {% if not user.is_authenticated %}
+                            <li>
+                                <a href="{% url 'accounts:login' %}"
+                                   class="{% if page == 'auth' %}active{% endif %}">
+                                    تسجيل / تسجيل الدخول
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="flex items-center">
+                    {% if user.is_authenticated %}
+                        <div class="relative ml-3">
+                            <div>
+                                <button onclick="toggleDropDown('user-menu')" type="button"
+                                        class="relative flex rounded-full"
+                                        id="user-menu-button" aria-expanded="false" aria-haspopup="true">
+                                    <img class="border object-contain w-10 h-10 text-sm bg-gray-100 rounded-full me-4"
+                                         src="{{ user.image.url }}"
+                                         alt="">
+                                </button>
+                            </div>
+
+                            <div id="user-menu"
+                                 class="hidden absolute left-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                 role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
+                                <!-- Active: "bg-gray-100", Not Active: "" -->
+                                <a href="{% url 'accounts:dashboard' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem"
+                                   tabindex="-1"
+                                   id="user-menu-item-1">
+                                    <i class="fa-solid fa-gear"></i>
+                                    لوحة التحكم
+                                </a>
+                                <a href="{% url 'accounts:profile' %}"
+                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem"
+                                   tabindex="-1"
+                                   id="user-menu-item-0">
+                                    <i class="fa-solid fa-user"></i>
+                                    الملف الشخصي
+                                </a>
+                                <a href="#" onclick="event.preventDefault(); document.getElementById('logout').submit();"
+                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem"
+                                   tabindex="-1"
+                                   id="user-menu-item-2">
+                                    <i class="fa-solid fa-right-from-bracket"></i>
+                                    تسجيل الخروج
+                                </a>
+                                <form class="hidden" id="logout" action="{% url 'accounts:logout' %}" method="POST">
+                                    {% csrf_token %}
+                                </form>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <!-- <button class="border w-10 h-10 text-sm bg-gray-100 rounded-full me-4">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button> -->
+                    <a href="{% url 'courses:courses_list' %}"
+                       class="bg-green-500 py-2 px-4 text-white font-medium rounded-full transition-all hover:bg-white hover:outline-green-500 hover:outline hover:outline-1 hover:text-green-500">
+                        <span class="me-2 hidden sm:inline">ابدأ الآن</span>
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </a>
+                    <ion-icon onclick="onToggleMenu(this)" name="menu"
+                              class="text-3xl cursor-pointer lg:hidden ms-4"></ion-icon>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    {% if messages %}
+        <div class="container mx-auto px-4 mt-4">
+            {% for msg in messages %}
+                <div class="alert alert-{{ msg.tags }}">
+                    {{ msg }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Start Content -->
+    {% block content %}
+    {% endblock %}
+    <!-- End Content -->
+
+    <footer class="relative bg-secondary-black">
+        <div class="relative z-10 pt-56 pb-24">
+            <div
+                    class="container mx-auto px-4 flex flex-col lg:flex-row justify-between lg:items-center gap-8 lg:gap-0">
+                <h1 class="text-green-500 text-3xl font-bold">eLearning</h1>
+                <ul class="flex lg:flex-row flex-col gap-4">
+                    <li>
+                        <a href="#" class="p-2 text-white">الرئيسية</a>
+                    </li>
+                    <li>
+                        <a href="#features" class="p-2 text-white">مميزات</a>
+                    </li>
+                    <li>
+                        <a href="#benefits" class="p-2 text-white">فوائد</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'courses:courses_list' %}" class="p-2 text-white">الدورات</a>
+                    </li>
+                    <li>
+                        <a href="#" class="p-2 text-white">المدونات</a>
+                    </li>
+                    {% if not request.user.is_authenticated %}
+                    <li>
+                        <a href="{% url 'accounts:login' %}" class="p-2 text-white">تسجيل / تسجيل الدخول</a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <ul class="flex gap-5">
+                    <li>
+                        <a href="#"
+                           class="social-icon flex justify-center items-center w-[1.875rem] h-[1.875rem] rounded-full">
+                            <svg class="-mb-2" xmlns="http://www.w3.org/2000/svg" width="20" height="22"
+                                 viewBox="0 0 20 22" fill="none">
+                                <path d="M10 5.29179C8.50426 5.29179 7.2917 6.50435 7.2917 8.00012C7.2917 9.49589 8.50426 10.7085 10 10.7085C11.4958 10.7085 12.7084 9.49589 12.7084 8.00012C12.7084 6.50435 11.4958 5.29179 10 5.29179Z"
+                                      fill="white"></path>
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                      d="M5.64131 0.56801C8.51475 0.246861 11.4853 0.246861 14.3588 0.56801C15.9408 0.744821 17.2168 1.9913 17.4024 3.57885C17.746 6.51635 17.746 9.48389 17.4024 12.4214C17.2168 14.0089 15.9408 15.2554 14.3588 15.4322C11.4853 15.7534 8.51475 15.7534 5.64131 15.4322C4.05931 15.2554 2.78332 14.0089 2.59764 12.4214C2.25407 9.48389 2.25407 6.51635 2.59764 3.57885C2.78332 1.9913 4.05931 0.744821 5.64131 0.56801ZM14.1667 3.00012C13.7065 3.00012 13.3334 3.37322 13.3334 3.83345C13.3334 4.29369 13.7065 4.66679 14.1667 4.66679C14.6269 4.66679 15 4.29369 15 3.83345C15 3.37322 14.6269 3.00012 14.1667 3.00012ZM6.0417 8.00012C6.0417 5.81399 7.8139 4.04179 10 4.04179C12.1862 4.04179 13.9584 5.81399 13.9584 8.00012C13.9584 10.1862 12.1862 11.9585 10 11.9585C7.8139 11.9585 6.0417 10.1862 6.0417 8.00012Z"
+                                      fill="white"></path>
+                            </svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#"
+                           class="social-icon flex justify-center items-center w-[1.875rem] h-[1.875rem] rounded-full">
+                            <svg class="-mb-2" xmlns="http://www.w3.org/2000/svg" width="20" height="21"
+                                 viewBox="0 0 20 21" fill="none">
+                                <path d="M18.1748 2.18953C18.2231 2.12222 18.1518 2.03531 18.0745 2.06525C17.5256 2.27803 16.9519 2.42158 16.3667 2.49233C17.0183 2.10306 17.5211 1.51049 17.7999 0.808941C17.8283 0.737474 17.7503 0.673652 17.683 0.71083C17.0774 1.04528 16.4242 1.28611 15.7458 1.42481C15.7174 1.43061 15.6881 1.42094 15.6682 1.39991C15.159 0.862676 14.4888 0.50498 13.7582 0.381373C13.0122 0.255168 12.2455 0.380128 11.5782 0.736654C10.9109 1.09318 10.3808 1.66111 10.0711 2.35136C9.77655 3.00766 9.69708 3.73925 9.84234 4.44186C9.85361 4.49637 9.81094 4.54784 9.75538 4.54439C8.43533 4.4624 7.14558 4.1113 5.96557 3.51221C4.78856 2.91466 3.74628 2.08335 2.90222 1.06958C2.86476 1.02458 2.79377 1.03041 2.76647 1.0822C2.50383 1.58059 2.36632 2.13608 2.36669 2.70066C2.36562 3.26265 2.50354 3.81618 2.76815 4.31197C3.03277 4.80776 3.41587 5.23042 3.88336 5.54233C3.38759 5.52884 2.90148 5.40628 2.4594 5.18406C2.40242 5.15542 2.33408 5.1962 2.33705 5.25989C2.37152 6.00092 2.64357 6.74486 3.11445 7.31563C3.61555 7.92303 4.31107 8.3387 5.08336 8.49233C4.78607 8.5828 4.47742 8.6305 4.16669 8.634C3.99757 8.63202 3.82879 8.61954 3.6613 8.59664C3.5992 8.58815 3.5485 8.64714 3.57024 8.70593C3.80058 9.32884 4.20752 9.87237 4.74259 10.2691C5.31463 10.6933 6.00467 10.9286 6.71669 10.9423C5.51436 11.8884 4.02993 12.4047 2.50002 12.409C2.34282 12.4095 2.18569 12.4044 2.02892 12.3937C1.94058 12.3877 1.89996 12.5054 1.9761 12.5506C3.46674 13.4352 5.17051 13.9028 6.90836 13.9007C8.19143 13.914 9.4643 13.6715 10.6526 13.1874C11.8409 12.7033 12.9209 11.9872 13.8294 11.0811C14.7378 10.1749 15.4567 9.09682 15.9438 7.90975C16.431 6.72268 16.6767 5.45044 16.6667 4.16733V3.76747C16.6667 3.74116 16.6791 3.71642 16.7001 3.70057C17.2654 3.27378 17.7624 2.76425 18.1748 2.18953Z"
+                                      fill="white"></path>
+                            </svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#"
+                           class="social-icon flex justify-center items-center w-[1.875rem] h-[1.875rem] rounded-full">
+                            <svg class="-mb-2" xmlns="http://www.w3.org/2000/svg" width="20" height="23"
+                                 viewBox="0 0 20 23" fill="none">
+                                <path d="M9.94535 0.979004C8.08581 0.991668 6.28844 1.65007 4.86072 2.84158C3.43301 4.03308 2.46366 5.68365 2.11851 7.51093C1.77336 9.3382 2.07385 11.2286 2.96858 12.8588C3.86331 14.489 5.29667 15.7577 7.02348 16.4478C6.90742 15.6883 6.90742 14.9156 7.02348 14.1561L7.96879 10.1457C7.81919 9.78246 7.74511 9.3926 7.75108 8.99984C7.75108 7.88838 8.39848 7.05192 9.20056 7.05192C9.34586 7.04974 9.48992 7.07898 9.62287 7.13766C9.75582 7.19634 9.87451 7.28306 9.97082 7.39188C10.0671 7.5007 10.1388 7.62906 10.1809 7.76815C10.2229 7.90725 10.2345 8.05379 10.2146 8.19775C10.2146 8.64097 10.0337 9.22705 9.84366 9.84241C9.73894 10.1816 9.63147 10.5296 9.55004 10.8675C9.50072 11.0449 9.49485 11.2315 9.53294 11.4116C9.57103 11.5918 9.65196 11.76 9.76887 11.9022C9.88578 12.0444 10.0352 12.1564 10.2046 12.2286C10.3739 12.3008 10.5582 12.3311 10.7417 12.317C12.1625 12.317 13.2625 10.8103 13.2625 8.64463C13.2768 8.20456 13.1992 7.76635 13.0347 7.35795C12.8702 6.94954 12.6223 6.57992 12.307 6.27265C11.9916 5.96538 11.6157 5.72721 11.2031 5.57335C10.7906 5.41948 10.3505 5.35329 9.91098 5.379C9.4417 5.35885 8.97321 5.43412 8.53387 5.60028C8.09453 5.76643 7.69347 6.02 7.35497 6.34565C7.01647 6.67129 6.74756 7.06224 6.56454 7.49482C6.38151 7.92741 6.28816 8.39263 6.29014 8.86234C6.28377 9.51669 6.48429 10.1563 6.86306 10.6899C6.8906 10.7206 6.91022 10.7574 6.92021 10.7974C6.9302 10.8373 6.93025 10.8791 6.92035 10.9191C6.8573 11.1713 6.71982 11.7212 6.69691 11.83C6.674 11.9389 6.5766 12.0076 6.42764 11.9389C5.42504 11.4691 4.80056 10.0082 4.80056 8.82796C4.80056 6.3014 6.63962 3.97536 10.1 3.97536C12.8787 3.97536 15.0443 5.95765 15.0443 8.61025C15.0443 11.3717 13.3256 13.5946 10.8792 13.5946C10.5206 13.6071 10.1645 13.5298 9.84333 13.3697C9.52216 13.2096 9.24608 12.9718 9.04014 12.678L8.54171 14.5858C8.30277 15.3272 7.96762 16.0341 7.54483 16.6884C8.32387 16.9186 9.13306 17.0306 9.94535 17.0207C12.0726 17.0207 14.1127 16.1756 15.6169 14.6714C17.1211 13.1672 17.9662 11.1271 17.9662 8.99984C17.9662 6.87258 17.1211 4.83245 15.6169 3.32825C14.1127 1.82405 12.0726 0.979004 9.94535 0.979004Z"
+                                      fill="white"></path>
+                            </svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#"
+                           class="social-icon flex justify-center items-center w-[1.875rem] h-[1.875rem] rounded-full">
+                            <svg class="-mb-2" xmlns="http://www.w3.org/2000/svg" width="20" height="22"
+                                 viewBox="0 0 20 22" fill="none">
+                                <path d="M11.8333 0.395996C10.8111 0.395996 9.83078 0.802059 9.10798 1.52486C8.38519 2.24765 7.97913 3.22797 7.97913 4.25016V6.396H5.91663C5.81307 6.396 5.72913 6.47994 5.72913 6.5835V9.41683C5.72913 9.52038 5.81307 9.60433 5.91663 9.60433H7.97913V15.4168C7.97913 15.5204 8.06307 15.6043 8.16663 15.6043H11C11.1035 15.6043 11.1875 15.5204 11.1875 15.4168V9.60433H13.2682C13.3543 9.60433 13.4293 9.54577 13.4501 9.4623L14.1585 6.62897C14.188 6.51063 14.0985 6.396 13.9766 6.396H11.1875V4.25016C11.1875 4.07888 11.2555 3.91461 11.3766 3.79349C11.4977 3.67237 11.662 3.60433 11.8333 3.60433H14C14.1035 3.60433 14.1875 3.52038 14.1875 3.41683V0.583496C14.1875 0.479943 14.1035 0.395996 14 0.395996H11.8333Z"
+                                      fill="white"></path>
+                            </svg>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="relative z-10">
+            <div class="copyright container mx-auto p-6 text-white text-center">
+                Copyright © 2023 eLearning.com
+            </div>
+        </div>
+        <!-- <svg class="footer-wave absolute top-0 left-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+            <path fill="#10C843" fill-opacity="1"
+                d="M0,160L16,165.3C32,171,64,181,96,170.7C128,160,160,128,192,133.3C224,139,256,181,288,192C320,203,352,181,384,181.3C416,181,448,203,480,186.7C512,171,544,117,576,85.3C608,53,640,43,672,37.3C704,32,736,32,768,42.7C800,53,832,75,864,85.3C896,96,928,96,960,90.7C992,85,1024,75,1056,112C1088,149,1120,235,1152,234.7C1184,235,1216,149,1248,101.3C1280,53,1312,43,1344,80C1376,117,1408,203,1424,245.3L1440,288L1440,0L1424,0C1408,0,1376,0,1344,0C1312,0,1280,0,1248,0C1216,0,1184,0,1152,0C1120,0,1088,0,1056,0C1024,0,992,0,960,0C928,0,896,0,864,0C832,0,800,0,768,0C736,0,704,0,672,0C640,0,608,0,576,0C544,0,512,0,480,0C448,0,416,0,384,0C352,0,320,0,288,0C256,0,224,0,192,0C160,0,128,0,96,0C64,0,32,0,16,0L0,0Z">
+            </path>
+        </svg> -->
+        <div class="area">
+            <ul class="circles">
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul>
+        </div>
+    </footer>
+
+    <!-- jQuery -->
+    <script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+    <!-- Main JS -->
+    <script src="{% static 'js/index/main.js' %}"></script>
+    <!-- Scripts Block -->
+    {% block scripts %}
+    {% endblock %}
+</body>
+
+</html>

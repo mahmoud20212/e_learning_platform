@@ -1,0 +1,29 @@
+.move {
+    cursor: move;
+}
+
+.custom-nav-pills.nav-pills .nav-link.active {
+    background-color: #28a745 !important;
+}
+
+.custom-nav-pills.nav-pills .nav-link:not(.active):hover {
+    color: #28a745 !important;
+}
+
+.custom-list-group .list-group-item-action.active {
+    background-color: #28a745 !important;
+    border-color: #28a745 !important;
+}
+
+.sidebar .nav-sidebar .nav-item .nav-link {
+    display: flex;
+    align-items: center;
+}
+
+#module-contents div.placeholder {
+    border: 1px dashed #ccc;
+}
+
+#modules div.placeholder {
+    border: 1px dashed #ccc;
+}

@@ -1,0 +1,72 @@
+{% extends 'layouts/dashboard/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    لوحة التحكم
+{% endblock %}
+
+{% block page_header %}
+    قائمة التشغيل
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    <li class="breadcrumb-item active">
+        قائمة التشغيل
+    </li>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="card card-success card-outline">
+            <div class="card-header">
+                <h5>
+                    الدورات المشترك بها
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row mt-3">
+                    {% for course in object_list %}
+                        <div class="col-lg-4 d-flex">
+                            <div class="card">
+                                <img src="{{ course.image.url }}" class="card-img-top rounded-top"
+                                     alt="{{ course.title }}">
+                                <div class="card-body d-flex flex-column">
+                                    <div style="gap: 8px;" class="mb-3 d-flex align-items-center border-bottom pb-2">
+                                        <img style="object-fit: contain; height: 45px; width: 45px;"
+                                             class="border bg-white rounded-circle" src="{{ course.owner.image.url }}"
+                                             alt="">
+                                        <div>
+                                            <small class="d-block text-muted">انشأ من قبل</small>
+                                            <span class="text-success">{{ course.owner.get_full_name }}</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h5 class="card-title font-weight-bolder">{{ course.title }}</h5>
+                                        <p class="card-text py-3">
+                                            {{ course.caption }}
+                                        </p>
+                                    </div>
+                                    <div class="mt-auto border-top pt-2">
+                                        <a class="text-success"
+                                           href="{% url "accounts:student_course_detail" course.id %}">
+                                            مشاهدة
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="col-12">
+                            <p>
+                                أنت غير مسجل في أي دورات حتى الآن.
+                                <a class="text-success" href="{% url "courses:courses_list" %}">تصفح الدورات</a>
+                                للتسجيل في الدورة.
+                            </p>
+                        </div>
+                    {% endfor %}
+                </div><!-- /.row -->
+            </div>
+        </div>
+    </div>
+{% endblock %}

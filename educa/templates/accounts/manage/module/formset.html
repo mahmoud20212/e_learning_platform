@@ -1,0 +1,41 @@
+{% extends 'layouts/dashboard/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    لوحة التحكم
+{% endblock %}
+
+{% block page_header %}
+    تعديل الوحدات
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    <li class="breadcrumb-item">
+        <a class="text-success" href="#">دوراتي</a>
+    </li>
+    <li class="breadcrumb-item active">
+        تعديل الوحدات
+    </li>
+
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="card card-success card-outline">
+            <div class="card-header">
+                <h5 class="m-0">تعديل وحدات "{{ course.title }}"</h5>
+            </div>
+            <div class="card-body">
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    {{ formset|crispy }}
+                    {{ formset.management_form }}
+                    <button class="btn btn-success">
+                        حفظ
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,408 @@
+{% load static %}
+{% load auth_extras %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+        {% block title %}{% endblock %}
+    </title>
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="{% static 'plugins/fontawesome-free/css/all.min.css' %}">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{% static 'dist/css/adminlte.min.css' %}">
+    <!-- RTL -->
+    <link rel="stylesheet" href="{% static 'dist/css/rtl.css' %}">
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="{% static 'css/dashboard/main.css' %}">
+    <!-- Styles Block -->
+    {% block styles %}
+    {% endblock %}
+    <!-- Utils JS -->
+    <script src="{% static 'js/dashboard/utils.js' %}"></script>
+</head>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+    <!-- Navbar -->
+    <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+        <!-- Left navbar links -->
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+            </li>
+            <li class="nav-item d-none d-sm-inline-block">
+                <a href="{% url 'accounts:dashboard' %}" class="nav-link">الرئيسية</a>
+            </li>
+            {% if not request.user|has_group:"instructors" %}
+            <li class="nav-item d-none d-sm-inline-block">
+                <a href="{% url 'accounts:instructor_register' %}" class="nav-link">هل تريد أن تصبح معلم؟</a>
+            </li>
+            {% endif %}
+            <li class="nav-item d-none d-sm-inline-block">
+                <a href="{% url 'accounts:contact_us' %}" class="nav-link">اتصل بنا</a>
+            </li>
+        </ul>
+
+        <!-- Right navbar links -->
+        <ul class="navbar-nav ml-auto">
+            <!-- Navbar Search -->
+            <!-- <li class="nav-item">
+                <a class="nav-link" data-widget="navbar-search" href="#" role="button">
+                    <i class="fas fa-search"></i>
+                </a>
+                <div class="navbar-search-block">
+                    <form class="form-inline">
+                        <div class="input-group input-group-sm">
+                            <input class="form-control form-control-navbar" type="search" placeholder="Search"
+                                   aria-label="Search">
+                            <div class="input-group-append">
+                                <button class="btn btn-navbar" type="submit">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                                <button class="btn btn-navbar" type="button" data-widget="navbar-search">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </li> -->
+
+            <!-- Messages Dropdown Menu -->
+            <li class="nav-item dropdown">
+                <a class="nav-link" data-toggle="dropdown" href="#">
+                    <i class="far fa-comments"></i>
+                    <span class="badge badge-danger navbar-badge">{{ notifications.count }}</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                    {% for notification in notifications %}
+                    <a href="{% url 'accounts:read_message' notification.id %}" class="dropdown-item">
+                        <!-- Message Start -->
+                        <div class="media">
+                            <img style="object-fit: contain; height: 50px;" src="{{ notification.sender_user.image.url }}" alt="User Avatar"
+                                 class="border img-size-50 mr-3 img-circle">
+                            <div class="media-body">
+                                <h3 class="dropdown-item-title">
+                                    {{ notification.sender_user.get_full_name }}
+                                </h3>
+                                <p class="text-sm">{{ notification.subject }}</p>
+                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> {{ notification.created }} </p>
+                            </div>
+                        </div>
+                        <!-- Message End -->
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    {% endfor %}
+                    <a href="{% url 'accounts:inbox_messages' %}" class="dropdown-item dropdown-footer">عرض كل الرسائل</a>
+                </div>
+            </li>
+            <!-- Notifications Dropdown Menu -->
+            <!-- <li class="nav-item dropdown">
+                <a class="nav-link" data-toggle="dropdown" href="#">
+                    <i class="far fa-bell"></i>
+                    <span class="badge badge-warning navbar-badge">15</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                    <span class="dropdown-header">15 Notifications</span>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-envelope mr-2"></i> 4 new messages
+                        <span class="float-right text-muted text-sm">3 mins</span>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-users mr-2"></i> 8 friend requests
+                        <span class="float-right text-muted text-sm">12 hours</span>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-file mr-2"></i> 3 new reports
+                        <span class="float-right text-muted text-sm">2 days</span>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
+                </div>
+            </li> -->
+            <li class="nav-item">
+                <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+                    <i class="fas fa-expand-arrows-alt"></i>
+                </a>
+            </li>
+            <!-- <li class="nav-item">
+                <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
+                    <i class="fas fa-th-large"></i>
+                </a>
+            </li> -->
+        </ul>
+    </nav>
+    <!-- /.navbar -->
+
+    <!-- Main Sidebar Container -->
+    <aside class="main-sidebar elevation-4 sidebar-dark-success">
+        <!-- Brand Logo -->
+        <a href="/" class="brand-link">
+            <img src="{% static 'dist/img/AdminLTELogo.png' %}" alt="AdminLTE Logo"
+                 class="brand-image img-circle elevation-3" style="opacity: .8">
+            <span class="brand-text font-weight-light">eLearning</span>
+        </a>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Sidebar user panel (optional) -->
+            <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                <div class="image">
+                    <img style="object-fit: contain; width: 34px; height: 34px;" src="{{ request.user.image.url }}"
+                         class="border bg-white img-circle elevation-2"
+                         alt="User Image">
+                </div>
+                <div class="info">
+                    <a href="#" class="d-block">{{ request.user.get_full_name }}</a>
+                </div>
+            </div>
+
+            <!-- SidebarSearch Form -->
+            <div class="form-inline">
+                <div class="input-group" data-widget="sidebar-search">
+                    <input class="form-control form-control-sidebar" type="search" placeholder="Search"
+                           aria-label="Search">
+                    <div class="input-group-append">
+                        <button class="btn btn-sidebar">
+                            <i class="fas fa-search fa-fw"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar Menu -->
+            <nav class="mt-2">
+                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                    data-accordion="false">
+                    <!-- Add icons to the links using the .nav-icon class
+                         with font-awesome or any other icon font library -->
+                    <li class="nav-item">
+                        <a href="{% url 'accounts:dashboard' %}" class="nav-link {% if page == 'dashboard' %}active{% endif %}">
+                            <i class="nav-icon fas fa-home"></i>
+                            <p>
+                                الرئيسية
+                                <!-- <span class="right badge badge-danger">New</span> -->
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item {% if page == 'inbox_messages' or page == 'sent_messages' or page == 'new_message' %}menu-open{% endif %}">
+                        <a href="#" class="nav-link {% if page == 'inbox_messages' or page == 'sent_messages' or page == 'new_message' %}active{% endif %}">
+                            <i class="nav-icon far fa-envelope"></i>
+                            <p>
+                                الرسائل
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{% url 'accounts:inbox_messages' %}" class="nav-link {% if page == 'inbox_messages' %}active{% endif %}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>الرسائل الواردة</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'accounts:sent_messages' %}" class="nav-link {% if page == 'sent_messages' %}active{% endif %}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>الرسائل المرسلة</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'accounts:create_message' %}" class="nav-link {% if page == 'new_message' %}active{% endif %}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>رسالة جديدة</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-header">الطالب</li>
+                    <li class="nav-item">
+                        <a href="{% url 'accounts:student_course_list' %}" class="nav-link {% if page == 'my_courses' %}active{% endif %}">
+                            <i class="nav-icon fas fa-th"></i>
+                            <p>
+                                قائمة التشغيل
+                            </p>
+                        </a>
+                    </li>
+
+                    {% if request.user|has_group:"instructors" or request.user.is_superuser %}
+                        <li class="nav-header">المعلم</li>
+                        <li class="nav-item">
+                            <a href="{% url 'accounts:manage_course_list' %}"
+                               class="nav-link {% if page == 'mine' %}active{% endif %}">
+                                <i class="nav-icon fas fa-th"></i>
+                                <p>إدارة دوراتي</p>
+                            </a>
+                        </li>
+                        <!-- <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-chart-pie"></i>
+                                <p>تقارير</p>
+                            </a>
+                        </li> -->
+                        <!--<li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>إدارة الإختبارات</p>
+                            </a>
+                        </li>-->
+                        <!-- <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-hand-holding-usd"></i>
+                                <p>الأرباح</p>
+                            </a>
+                        </li> -->
+                        <!-- <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-wallet"></i>
+                                <p>سحب</p>
+                            </a>
+                        </li> -->
+                    {% endif %}
+                    <li class="nav-header">المدونة</li>
+                    <li class="nav-item">
+                        <a href="{% url 'accounts:user_post_list' %}"
+                           class="nav-link {% if page == 'blog_posts' %}active{% endif %}">
+                            <i class="nav-icon fab fa-blogger"></i>
+                            <p>
+                                تدويناتي
+                            </p>
+                        </a>
+                    </li>
+                    <!--<li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-th"></i>
+                            <p>
+                                Simple Link
+                                <span class="right badge badge-danger">New</span>
+                            </p>
+                        </a>
+                    </li>-->
+                    <li class="nav-header">الإعدادات</li>
+                    <li class="nav-item">
+                        <a href="{% url 'accounts:profile' %}"
+                           class="nav-link {% if page == 'profile' %}active{% endif %}">
+                            <i class="nav-icon far fa-address-card"></i>
+                            <p>
+                                الملف الشخصي
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#"
+                           class="nav-link"
+                           onclick="event.preventDefault(); document.getElementById('logout').submit();">
+                            <i class="nav-icon fas fa-sign-out-alt"></i>
+                            <p>
+                                تسجيل الخروج
+                            </p>
+                        </a>
+                        <form class="d-none" id="logout" action="{% url 'accounts:logout' %}" method="POST">
+                            {% csrf_token %}
+                        </form>
+                    </li>
+                </ul>
+            </nav>
+            <!-- /.sidebar-menu -->
+        </div>
+        <!-- /.sidebar -->
+    </aside>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">
+                            {% block page_header %}
+                            {% endblock %}
+                        </h1>
+                    </div><!-- /.col -->
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            {% block breadcrumb %}
+                                <li class="breadcrumb-item">
+                                    <a class="text-success" href="#">الرئيسية</a>
+                                </li>
+                            {% endblock %}
+                        </ol>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+
+        <!-- Main content -->
+        <div class="content">
+            <div class="container-fluid">
+                {% if messages %}
+                    {% for msg in messages %}
+                        <div style="padding-right: 1.25rem;" class="alert alert-{{ msg.tags }} alert-dismissible">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            <h5>
+                                {% if msg.tags == 'success' %}
+                                    <i class="icon fas fa-check"></i>
+                                {% elif msg.tags == 'error' %}
+                                    <i class="icon fas fa-ban"></i>
+                                {% elif msg.tags == 'warning' %}
+                                    <i class="icon fas fa-exclamation-triangle"></i>
+                                {% elif msg.tags == 'info' %}
+                                    <i class="icon fas fa-info"></i>
+                                {% endif %}
+                                تنبيه!
+                            </h5>
+                            {{ msg }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            {% block content %}
+            {% endblock %}
+        </div>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+        <div class="p-3">
+            {% block control_sidebar %}
+            {% endblock %}
+        </div>
+    </aside>
+    <!-- /.control-sidebar -->
+
+    <!-- Main Footer -->
+    <footer class="main-footer">
+        <!-- To the right -->
+        <div class="float-right d-none d-sm-inline">
+            صُنع بكل حُب ❤ <a class="text-success" href="/">eLearning.com</a>
+        </div>
+        <!-- Default to the left -->
+        <strong>
+            حقوق الطبع والنشر &copy; 2023-2024 <a class="text-success" href="/">eLearning.com</a>
+        </strong> كل الحقوق محفوظة.
+    </footer>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED SCRIPTS -->
+<!-- jQuery -->
+<script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+<!-- Bootstrap 4 -->
+<script src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'dist/js/adminlte.min.js' %}"></script>
+<!-- Scripts Block -->
+{% block scripts %}
+{% endblock %}
+</body>
+</html>

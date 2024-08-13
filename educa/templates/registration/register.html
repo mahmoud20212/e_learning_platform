@@ -1,0 +1,124 @@
+{% extends 'layouts/index/base.html' %}
+
+{% block title %}
+	تسجيل
+{% endblock %}
+
+{% block content %}
+	<main>
+        <div class="isolate bg-white px-6 py-12 lg:px-8">
+            <div class="mx-auto max-w-2xl text-center">
+                <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+                    إنشاء حساب جديد
+                </h2>
+            </div>
+            <form method="POST" class="mx-auto mt-10 max-w-xl">
+                {% csrf_token %}
+                <div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
+                    <div>
+                        <label for="first_name" class="block text-sm font-semibold leading-6 text-gray-900">
+                            الإسم الأول
+                        </label>
+                        <div class="mt-2">
+                            {{ form.first_name }}
+                            {% for error in form.first_name.errors %}
+                                <p class="text-red-500 font-medium px-4 text-sm mt-2">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div>
+                        <label for="last_name" class="block text-sm font-semibold leading-6 text-gray-900">
+                            الإسم الأخير
+                        </label>
+                        <div class="mt-2">
+                            {{ form.last_name }}
+                            {% for error in form.last_name.errors %}
+                                <p class="text-red-500 font-medium px-4 text-sm mt-2">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label for="username" class="block text-sm font-semibold leading-6 text-gray-900">
+                            إسم المستخدم
+                        </label>
+                        <div class="mt-2">
+                            {{ form.username }}
+                            {% for error in form.username.errors %}
+                                <p class="text-red-500 font-medium px-4 text-sm mt-2">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label for="email" class="block text-sm font-semibold leading-6 text-gray-900">
+                            البريد الإلكتروني
+                        </label>
+                        <div class="mt-2">
+                            {{ form.email }}
+                            {% for error in form.email.errors %}
+                                <p class="text-red-500 font-medium px-4 text-sm mt-2">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label for="phone_number" class="block text-sm font-semibold leading-6 text-gray-900">
+                            رقم الهاتف
+                        </label>
+                        <div class="mt-2">
+                            {{ form.phone_number }}
+                            {% for error in form.phone_number.errors %}
+                                <p class="text-red-500 font-medium px-4 text-sm mt-2">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label for="password" class="block text-sm font-semibold leading-6 text-gray-900">
+                            كلمة المرور
+                        </label>
+                        <div class="mt-2">
+                            {{ form.password1 }}
+                            {% for error in form.password1.errors %}
+                                <p class="text-red-500 font-medium px-4 text-sm mt-2">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label for="confirm_password" class="block text-sm font-semibold leading-6 text-gray-900">
+                            تأكيد كلمة المرور
+                        </label>
+                        <div class="mt-2">
+                            {{ form.password2 }}
+                            {% for error in form.password2.errors %}
+                                <p class="text-red-500 font-medium px-4 text-sm mt-2">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8">
+                    <button type="submit" class="flex w-full justify-center rounded-full bg-green-500 px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-green-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500">
+                        تسجيل الدخول
+                    </button>
+                </div>
+                <p class="mt-10 text-center text-sm text-gray-500">
+                    لديك حساب بفعل؟
+                    <a href="{% url 'accounts:login' %}" class="font-semibold leading-6 text-green-500 hover:text-green-400">
+                        تسجيل الدخول
+                    </a>
+                </p>
+            </form>
+        </div>
+    </main>
+{% endblock %}

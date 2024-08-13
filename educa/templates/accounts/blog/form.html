@@ -1,0 +1,53 @@
+{% extends 'layouts/dashboard/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    لوحة التحكم
+{% endblock %}
+
+{% block page_header %}
+    {% if object %}
+        تعديل التدوينة
+    {% else %}
+        إنشاء تدوينة
+    {% endif %}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    <li class="breadcrumb-item">
+        <a class="text-success" href="#">تدويناتي</a>
+    </li>
+    <li class="breadcrumb-item active">
+        {% if object %}
+            تعديل التدوينة
+        {% else %}
+            إنشاء تدوينة
+        {% endif %}
+    </li>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="card card-success card-outline">
+            <div class="card-header">
+                <h5 class="m-0">
+                    {% if object %}
+                        تعديل "{{ object.title }}"
+                    {% else %}
+                        إنشاء تدوينة
+                    {% endif %}
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {{ form|crispy }}
+                    {% csrf_token %}
+                    <button class="btn btn-success">
+                        حفظ
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

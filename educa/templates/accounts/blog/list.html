@@ -1,0 +1,137 @@
+{% extends 'layouts/dashboard/base.html' %}
+
+{% block title %}
+    لوحة التحكم
+{% endblock %}
+
+{% block page_header %}
+    تدويناتي
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    <li class="breadcrumb-item active">تدويناتي</li>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card card-row card-green">
+                    <div class="card-header">
+                        <div style="font-size: 1.1rem;" class="d-flex justify-content-between align-items-center">
+                            <span>كل التدوينات</span>
+                            <a class="text-dark btn btn-sm btn-light" href="{% url 'accounts:post_create' %}">
+                                تدوينة جديدة
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        {% for post in object_list %}
+                            <div class="card card-green card-outline">
+                                <div class="card-header">
+                                    <h5 class="card-title">{{ post }}</h5>
+                                    <div class="card-tools">
+                                        <a href="{% url 'accounts:post_edit' post.pk %}" class="btn btn-tool">
+                                            <i class="fas fa-pen"></i>
+                                        </a>
+                                        <a href="{% url 'accounts:post_delete' post.pk %}"
+                                           class="btn btn-tool btn-link">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                        <a href="{% url 'blog:post_detail' post.pk %}" class="btn btn-tool btn-link">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <p class="card-text">
+                                لا يوجد تدوينات.
+                            </p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card card-row card-lightblue">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            كل التعليقات
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        {% for comment in comments %}
+                            <div id="accordion" class="card card-lightblue">
+                                <div class="card-header">
+                                    <h4 class="card-title w-100">
+                                        <a class="d-block w-100 collapsed" data-toggle="collapse"
+                                           href="#collapse-{{ forloop.counter }}" aria-expanded="false">
+                                            {{ comment }}
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="collapse-{{ forloop.counter }}" class="collapse" data-parent="#accordion">
+                                    <div class="card-body">
+                                        <div class="p-2 border-bottom">
+                                            <div class="custom-control custom-checkbox">
+                                                <input {% if comment.active %} checked {% endif %} class="comment-checkbox custom-control-input" type="checkbox"
+                                                       id="customCheckbox{{ forloop.counter }}" value="{{ comment.id }}">
+                                                <label for="customCheckbox{{ forloop.counter }}" class="custom-control-label">فعال</label>
+                                            </div>
+                                        </div>
+                                        <div class="p-2 border-bottom">
+                                            الإسم: {{ comment.name }}
+                                        </div>
+                                        <div class="p-2 border-bottom">
+                                            البريد الإلكتروني: {{ comment.email }}
+                                        </div>
+                                        <div style="display: grid; gap: 16px;" class="p-2">
+                                            {{ comment.description|linebreaks }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <p class="card-text">
+                                لا يوجد تعليقات.
+                            </p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        // When the checkbox is clicked
+        $(".comment-checkbox").click(function () {
+            // Get the state of the checkbox
+            let element = $(this);
+            let isChecked = element.is(":checked");
+            let idChecked = element.val();
+
+            // Send an AJAX request to the server
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'accounts:user_post_list' %}",
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: JSON.stringify({
+                    isChecked: isChecked,
+                    idChecked: idChecked,
+                }),
+                success: function (response) {
+                    // Handle the server's response here
+                    console.log(response);
+                },
+                error: function (xhr, status, error) {
+                    // Handle errors here
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+    </script>
+{% endblock %}

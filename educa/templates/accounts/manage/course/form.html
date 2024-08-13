@@ -1,0 +1,66 @@
+{% extends 'layouts/dashboard/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    لوحة التحكم
+{% endblock %}
+
+{% block page_header %}
+    {% if object %}
+        تعديل الدورة
+    {% else %}
+        إنشاء دورة جديدة
+    {% endif %}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    <li class="breadcrumb-item">
+        <a class="text-success" href="#">دوراتي</a>
+    </li>
+    <li class="breadcrumb-item active">
+        {% if object %}
+            تعديل الدورة
+        {% else %}
+            إنشاء دورة جديدة
+        {% endif %}
+    </li>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="card card-success card-outline">
+            <div class="card-header">
+                <h5 class="m-0">
+                    {% if object %}
+                        تعديل "{{ object.title }}"
+                    {% else %}
+                        دورة جديدة
+                    {% endif %}
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {{ form|crispy }}
+                    {% csrf_token %}
+                    <button class="btn btn-success">
+                        حفظ
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+{% endblock %}
+
+{% block scripts %}
+    <script src="https://cdn.jsdelivr.net/npm/slug@8.2.3/slug.min.js"></script>
+    <script>
+        // Event listener for changes in the title input
+        $('#id_title').on('input', function () {
+            var title = $(this).val();
+            var slugified = slug(title);
+            $('#id_slug').val(slugified);
+        });
+    </script>
+
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'layouts/dashboard/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+لوحة التحكم
+{% endblock %}
+
+{% block page_header %}
+تقديم طلب
+{% endblock %}
+
+{% block breadcrumb %}
+{{ block.super }}
+<li class="breadcrumb-item active">
+    تقديم طلب
+</li>
+
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    {% if form %}
+    <div class="card card-success card-outline">
+        <div class="card-header">
+            <h5 class="m-0">
+                تقدم بطلب لتصبح معلم 👨‍🏫
+            </h5>
+        </div>
+        <div class="card-body">
+            <form action="" method="POST">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button class="btn btn-success mb-3">
+                    أرسل الطلب
+                </button>
+            </form>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info alert-dismissible">
+        <h5><i class="icon fas fa-info"></i> تنبيه!</h5>
+        تم إرسال طلبك بالفعل يرجى الإنتظار حتى يتم مراجعة طلبك.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

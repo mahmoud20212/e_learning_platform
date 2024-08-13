@@ -1,0 +1,40 @@
+{% extends 'layouts/dashboard/base.html' %}
+
+{% block title %}
+    لوحة التحكم
+{% endblock %}
+
+{% block page_header %}
+    حذف الدورة
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    <li class="breadcrumb-item">
+        <a class="text-success" href="#">دوراتي</a>
+    </li>
+    <li class="breadcrumb-item active">
+        حذف الدورة
+    </li>
+
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="card card-danger card-outline">
+            <div class="card-header">
+                <h5 class="m-0">حذف "{{ object }}"</h5>
+            </div>
+            <div class="card-body">
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <p class="card-text">هل أنت متأكد أنك تريد حذف هذه الدورة؟</p>
+                    <a class="btn btn-secondary" href="{% url 'accounts:manage_course_list' %}">إلغاء</a>
+                    <button class="btn btn-danger">
+                        تأكيد الحذف
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

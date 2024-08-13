@@ -1,0 +1,48 @@
+{% extends 'layouts/index/base.html' %}
+{% load static %}
+
+{% block title %}
+    المدونات
+{% endblock %}
+
+{% block content %}
+    <main>
+        <div class="relative container mx-auto px-4 pt-20">
+            <!-- <div class="border-b mb-5 pb-5">
+                <h3 class="text-2xl">التدوينات</h3>
+            </div> -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-10">
+                {% for post in posts %}
+                    <article>
+                        <div>
+                            <img class="rounded-lg w-full h-[15.8125rem] object-cover" src="{{ post.image.url }}" alt="">
+                        </div>
+                        <div class="my-5">
+                            <h4 class="text-2xl">{{ post.title }}</h4>
+                        </div>
+                        <p class="mb-5">
+                            {{ post.content|truncatewords:25 }}
+                        </p>
+                        <a href="{% url 'blog:post_detail' post.pk %}" class="inline-block outline outline-1 outline-green-500 py-4 px-5 rounded-full text-green-500 transition-all hover:bg-green-500 hover:text-white">
+                            <span class="me-2 font-medium">اقرأ المقال</span>
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </a>
+                    </article>
+                {% empty %}
+                    <div class="col-span-3 text-center p-4 bg-gray-100 rounded border text-lg font-medium mb-32">
+                    لا يوجد منشورات حالياً
+                    </div>
+                {% endfor %}
+            </div>
+            <span class="hidden lg:inline w-[1.875rem] h-[1.875rem] absolute bg-green-500 rounded-full top-[57%] -right-10"></span>
+            <span class="hidden lg:inline w-[1.25rem] h-[1.25rem] absolute bg-green-500 rounded-full bottom-0 left-0"></span>
+        </div>
+        {% if posts %}
+            <div class="text-center mt-20 mb-32">
+            <button class="bg-green-500 py-4 px-5 rounded-full text-white transition-all hover:bg-transparent hover:outline-green-500 hover:outline hover:outline-1 hover:text-green-500">
+                <span class="font-medium">عرض المزيد</span>
+            </button>
+        </div>
+        {% endif %}
+    </main>
+{% endblock %}
